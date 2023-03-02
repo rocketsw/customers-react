@@ -43,8 +43,8 @@ export const Customers = ({ customers, onSelectCustomer, isEditInProgess }) => {
         <>
             <div className="list-container">
                 <h1>Customers</h1>
-                <div className="list" id="customers">
-                    <table>
+                <div className="list tableFixHead" id="customers">
+                    <table className="fixed_header">
                         <thead>
                             <tr>
                                 <th>Select</th>

@@ -4,6 +4,18 @@ table, th, td {
     background-color: white;
     color: black;
 }
+.tableFixHead {
+  overflow-y: auto; /* make the table scrollable if height is more than 200 px  */
+  height: 400px; /* gives an initial height of 200px to the table */
+}
+.tableFixHead thead th {
+  position: sticky; /* make the table heads sticky */
+  top: 0px; /* table head will be placed from the top of the table and sticks to it */
+}
+table {
+  border-collapse: collapse; /* make the table borders collapse to each other */
+  width: 100%;
+}
 .labeltext {
   color: white;
   text-align: right;
@@ -15,12 +27,13 @@ table, th, td {
   flex-direction: column;
   padding: 0px 15px;
   margin: auto;
-  justify-content: center;
 }
 .list {
   display: flex;
   flex-direction: row;
   justify-content: center;
+  width: 60%;
+  margin: auto;
   margin-top: 1em;
   margin-bottom: 1em;
 }
@@ -32,4 +45,7 @@ table, th, td {
   color: white;
   background-color: red;
   padding: 4px;
+}
+.small-col {
+  width: 50px
 }
