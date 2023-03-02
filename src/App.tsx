@@ -13,7 +13,7 @@ export type CustomerType = {
   state: string;
   zip: string;
   phone: string;
-} 
+}
 
 let defaultValue: CustomerType = {
   id: 0,
@@ -26,18 +26,21 @@ let defaultValue: CustomerType = {
   phone: ''
 }
 
+type SelectedCustomerType = CustomerType | null
+
 export type CustomersTypeProps = {
-  customer: CustomerType;
-  onSelectCustomer: (cust: CustomerType)=>void;
-  editStatus: ( editinProgress: boolean ) => void;
+  customer: SelectedCustomerType;
+  onSelectCustomer: (cust: CustomerType) => void;
+  editStatus: (editinProgress: boolean) => void;
 }
 
 export type CustomerEditTypeProps = {
-  customer: CustomerType;
-  handleSaveEdit: (cust: CustomerType, serverMsg: string)=>void;
-  handleCancelEdit: ()=>void;
-  handleEditStatusChange: ( editinProgress: boolean ) => void;
+  customer: SelectedCustomerType;
+  handleSaveEdit: (cust: CustomerType, serverMsg: string) => void;
+  handleCancelEdit: () => void;
+  handleEditStatusChange: (editinProgress: boolean) => void;
   isEditInProgess: boolean;
+  isAddOrEdit: string;
 }
 
 
@@ -47,9 +50,10 @@ export type CustomerEditTypeProps = {
 export const App = () => {
   console.log('in App()')
   const [customerList, setCustomerList] = useState<CustomerType[]>([]);
-  const [selectedCustomer, setSelectedCustomer] = useState<CustomerType>(defaultValue);
+  const [selectedCustomer, setSelectedCustomer] = useState<SelectedCustomerType>(null);
   const [msg, setMsg] = useState("")
   const [isEditting, setIsEditting] = useState(false)
+  let [editOrAdd, setAddOrEdit] = useState('Edit')
 
   useEffect(() => {
     let url = "http://localhost:3000/customers"
@@ -70,30 +74,49 @@ export const App = () => {
   }, [])
 
   const handleSelectCustomer = customer => {
+    setAddOrEdit('Edit')
     setSelectedCustomer(customer);
   };
 
   const handleSavedEdit = (updatedCustomer: CustomerType, serverMsg: string) => {
-    const index = customerList.findIndex(c => c.id === updatedCustomer.id);
-    customerList[index] = updatedCustomer;
-    setSelectedCustomer(defaultValue);
+    if (editOrAdd === 'Edit') {
+      const index = customerList.findIndex(c => c.id === updatedCustomer.id);
+      customerList[index] = updatedCustomer;
+    } else
+    {
+      customerList.push(updatedCustomer);
+    }
+    setSelectedCustomer(null);
     setIsEditting(false);
     setMsg(serverMsg);
   };
 
   const handleCancelEdit = () => {
-    setSelectedCustomer(selectedCustomer);
+    setSelectedCustomer(null);
     setIsEditting(false)
     setMsg('');
   };
 
+  const onAdd = () => {
+    setSelectedCustomer(defaultValue)
+    setAddOrEdit('Add')
+  }
 
   return (
     <>
       <div>
         <Customers customers={customerList} onSelectCustomer={handleSelectCustomer} isEditInProgess={isEditting} />
-        <CustomerEdit customer={selectedCustomer} handleSaveEdit={handleSavedEdit} handleCancelEdit={handleCancelEdit} handleEditStatusChange={setIsEditting} isEditInProgess={isEditting}/>
-        <Messages messages={msg}/>
+        <div className="btn-row">
+          <div className="btn-row-left-side"></div>
+          <div className="btn-row-middle">
+            <button className="list-btn" disabled={isEditting} type="button" onClick={onAdd} >Add</button>
+          </div>
+        </div>
+        {selectedCustomer &&
+           <CustomerEdit customer={selectedCustomer} handleSaveEdit={handleSavedEdit} handleCancelEdit={handleCancelEdit} 
+              handleEditStatusChange={setIsEditting} isEditInProgess={isEditting} isAddOrEdit={editOrAdd} />
+        }
+        <Messages messages={msg} />
       </div>
     </>
   )

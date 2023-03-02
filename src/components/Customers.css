@@ -24,34 +24,8 @@ table, th, td {
   margin-top: 1em;
   margin-bottom: 1em;
 }
-
-.list-btn {
-  padding: 4px 12px;
-  font-size: 15px;
-  border-radius: 5px;
-}
 .list-btn:disabled {
   background-color: lightgray;
-}
-
-.btn-row {
-  display: flex;
-  flex-direction: row;
-
-}
-.btn-row-left-side {
-  width: 45%;
-  color: white;
-  padding: 4px;
-}
-.btn-row-middle {
-  width: 10%;
-  justify-content: right;
-}
-.btn-row-right-side {
-  width: 45%;
-  color: white;
-  padding: 4px;
 }
 .list-error {
   width: auto;

@@ -16,12 +16,13 @@ let defaultValue: CustomerType = {
 }
 
 
-export const CustomerEdit = ({ customer, handleSaveEdit, handleCancelEdit, handleEditStatusChange }: CustomerEditTypeProps) => {
+export const CustomerEdit = ({ customer, handleSaveEdit, handleCancelEdit, handleEditStatusChange, isAddOrEdit }: CustomerEditTypeProps) => {
   console.log('in CustomerEdit', customer)
-  let [cancelled, setCancelled] = useState(false)
+  let [shouldClearEntry, setShouldClearEntry] = useState(false)
   
   let isEditInProgess = false;
   let isEdittingRef = useRef(isEditInProgess)
+  if( isAddOrEdit==='Add' ) { isEdittingRef.current = true }
 
   const { register, handleSubmit, reset, formState: { errors } } = useForm({
     defaultValues: {
@@ -44,8 +45,8 @@ export const CustomerEdit = ({ customer, handleSaveEdit, handleCancelEdit, handl
   // force form to reset when 'customer' prop changes
   useEffect(() => {
     reset(customer!)
-    setCancelled(false)
-  }, [reset, customer, cancelled])
+    setShouldClearEntry(false)
+  }, [reset, customer, shouldClearEntry])
 
   function checkRequired(formData: CustomerType) {
     let missingEntry = false;
@@ -80,36 +81,36 @@ export const CustomerEdit = ({ customer, handleSaveEdit, handleCancelEdit, handl
         let customerParamStr = "id=" + id + "&first=" + first + "&last=" + last + "&street=" + street + "&city=" + city + "&state=" + state + "&zip=" + zip + "&phone=" + phone;
         console.log(customerParamStr)
       
-        let url = "http://localhost:3000/updateCustomer?" + customerParamStr;
+        let api = isAddOrEdit==='Add' ? 'addCustomer' : 'updateCustomer'
+        let url = "http://localhost:3000/" + api + "?" + customerParamStr;
         fetch(url)
         .then((response) => {
           if (!response.ok) {
-            throw new Error("Network response for 'updateCustomer' was an error. " + response.statusText);
+            throw new Error("Network response for '" + api + "' was an error. " + response.statusText);
           }
           return response.text();
         })
         .then((result) => {  // result is an object
-          console.log("updateCustomer fetch successful:", result);
-          callBackFct(formData, result);
+          console.log(api + " fetch successful:", result);
+          handleDBWriteCallback(formData, result);
         })
         .catch((error) => {
-          console.error("The 'updateCustomer' API call returned an error:", error);
+          console.error("The '" + api + "'  API call returned an error:", error);
         })
       }
     }
   }
 
-  function callBackFct(formData: CustomerType, messageText) {
+  function handleDBWriteCallback(formData: CustomerType, messageText) {
     handleSaveEdit(formData, messageText)
     isEdittingRef.current  = false;
+    setShouldClearEntry(true);
   }
 
   let onCancel = () => {
     isEdittingRef.current  = false;
     handleEditStatusChange(isEditInProgess)
-    //reset(defaultValue)
-    //customer = defaultValue;
-    setCancelled(true);
+    setShouldClearEntry(true);
     handleCancelEdit();
     return false;
   }
@@ -121,38 +122,38 @@ export const CustomerEdit = ({ customer, handleSaveEdit, handleCancelEdit, handl
 
   return (
       <form onSubmit={handleSubmit(onSubmit)}>
-        <h1>Edit Customer</h1>
+        <h1>{isAddOrEdit} Customer</h1>
         <div className="edit-wrapper">
           <div className="edit-container">
             <div>
               <input className='noShow' {...register('id')} id="id"  />
               <div className="data-div">
                 <label>First Name:
-                  <input type="text" {...register('first', {required: true, onChange: () => editStatusWrapper(true) })} id="first" placeholder="Enter your first name" />
+                  <input type="text" {...register('first', {required: true, onChange: () => editStatusWrapper(true) })} id="first" placeholder="Enter first name" />
                   {errors.first?.type === 'required' && <p className="error" role="alert">first name is required</p>}
                 </label>
               </div>
               <div className="data-div">
                 <label>Street Address:
-                  <input type="text" {...register('street', {required: true, onChange: () => editStatusWrapper(true) })} id="street" placeholder="Enter your street address" />
+                  <input type="text" {...register('street', {required: true, onChange: () => editStatusWrapper(true) })} id="street" placeholder="Enter street address" />
                   {errors.street?.type === 'required' && <p className="error" role="alert">street address is required</p>}
                 </label>
               </div>
               <div className="data-div">
                 <label>City:
-                  <input type="text" {...register('city', {required: true, onChange: () => editStatusWrapper(true) })} id="city" placeholder="Enter your city" />
+                  <input type="text" {...register('city', {required: true, onChange: () => editStatusWrapper(true) })} id="city" placeholder="Enter city" />
                   {errors.city?.type === 'required' && <p className="error" role="alert">city is required</p>}
                 </label>
               </div>
               <div className="data-div">
                 <label>Zip Code:
-                  <input type="text" {...register('zip', {required: true, onChange: () => editStatusWrapper(true) })} id="zip" placeholder="Enter your Zip Code" />
+                  <input type="text" {...register('zip', {required: true, onChange: () => editStatusWrapper(true) })} id="zip" placeholder="Enter Zip Code" />
                   {errors.zip?.type === 'required' && <p className="error" role="alert">zip code is required</p>}
                 </label>
               </div>
               <div className="data-div">
                 <label>Phone:
-                  <input type="text" {...register('phone', {required: true, onChange: () => editStatusWrapper(true) })} id="phone" placeholder="Enter your phone number" />
+                  <input type="text" {...register('phone', {required: true, onChange: () => editStatusWrapper(true) })} id="phone" placeholder="Enter phone number" />
                   {errors.phone?.type === 'required' && <p className="error" role="alert">phone number is required</p>}
                 </label>
               </div>
@@ -160,7 +161,7 @@ export const CustomerEdit = ({ customer, handleSaveEdit, handleCancelEdit, handl
             <div>
               <div className="data-div">
                 <label>Last Name:
-                  <input type="text" {...register('last', {required: true, onChange: () => editStatusWrapper(true) })} id="last" placeholder="Enter your last name" />
+                  <input type="text" {...register('last', {required: true, onChange: () => editStatusWrapper(true) })} id="last" placeholder="Enter last name" />
                   {errors.last?.type === 'required' && <p className="error" role="alert">last name is required</p>}
                 </label>
               </div>
@@ -179,7 +180,7 @@ export const CustomerEdit = ({ customer, handleSaveEdit, handleCancelEdit, handl
           </div>
         </div>
 
-        <div className="edit-rowcenter">
+        <div className="rowcenter">
           <button className="edit-btn" type="submit" disabled={!isEdittingRef.current} >Save</button>
           <button className="edit-btn" type="button" onClick={onCancel}>Cancel</button>
         </div>

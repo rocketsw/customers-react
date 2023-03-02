@@ -14,3 +14,31 @@ h1 {
   text-align: center;
   font-size: 40px;
 }
+.rowcenter {
+  display: flex;
+  justify-content: center;
+}
+.btn-row {
+  display: flex;
+  flex-direction: row;
+}
+.btn-row-left-side {
+  width: 45%;
+  color: white;
+  padding: 4px;
+}
+.btn-row-middle {
+  width: 10%;
+  justify-content: center;
+}
+.btn-row-right-side {
+  width: 45%;
+  color: white;
+  padding: 4px;
+}
+.list-btn {
+  margin-bottom: 8px;
+  padding: 4px 12px;
+  font-size: 15px;
+  border-radius: 5px;
+}

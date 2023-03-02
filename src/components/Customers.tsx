@@ -7,7 +7,7 @@ export const Customers = ({ customers, onSelectCustomer, isEditInProgess }) => {
 
     let [rowSelectedError, setRowSelectedError] = useState(false)
 
-    function edit() {
+    function onEdit() {
         console.log("edit()");
         let radios = document.getElementsByName('custid');
         let index = -1;
@@ -31,7 +31,6 @@ export const Customers = ({ customers, onSelectCustomer, isEditInProgess }) => {
         console.log("index = " + index);
         if (index >= 0) {
             console.log('calling onSelectCustomer() with ', customers[index])
-            //setCustomer(customers[index])
             onSelectCustomer(customers[index])
         }
         else {
@@ -81,7 +80,7 @@ export const Customers = ({ customers, onSelectCustomer, isEditInProgess }) => {
                 <div className="btn-row">
                     <div className="btn-row-left-side"></div>
                     <div className="btn-row-middle">
-                       <button className="list-btn" disabled={isEditInProgess} type="button" onClick={edit} >Edit</button>
+                       <button className="list-btn" disabled={isEditInProgess} type="button" onClick={onEdit} >Edit</button>
                     </div>
                     {rowSelectedError && 
                        <div className="btn-row-right-side"><span className="list-error">Select a row to edit</span></div>}

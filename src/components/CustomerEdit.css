@@ -49,10 +49,6 @@
 #zipcodex {
   width: 8em;
 }
-.edit-rowcenter {
-  display: flex;
-  justify-content: center;
-}
 .edit-btn {
   padding: 4px 8px;
   font-size: 15px;
