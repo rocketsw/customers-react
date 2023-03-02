@@ -1,0 +1,75 @@
+.edit-container {
+  display: grid;
+  overflow-x: hidden;
+  grid-template-columns: 1fr 1fr;
+  grid-gap: 8px;
+  padding: 20px;
+  border-style: solid;
+  border-color: white;
+  width: 75%;
+  margin-bottom: 1em;
+}
+.edit-container input {
+  width: 250px;
+  padding: 8px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  margin-bottom: 0px;
+}
+.edit-container input:focus {
+  outline: none;
+  border-color: #007bff;
+}
+.edit-container label {
+  font-weight: bold;
+  margin-bottom: 0px;
+  display: inline-block;
+  width: 120px;
+  color: white;
+}
+.data-div {
+  margin-bottom: 8px;
+  display: block;
+}
+.hidden {
+  visibility: hidden;
+}
+.noShow {
+  display: none;
+}
+.edit-wrapper {
+  display: flex;
+  margin: auto;
+  width: 75%;
+  justify-content: center;
+}
+#statex {
+  width: 2em;
+}
+#zipcodex {
+  width: 8em;
+}
+.edit-rowcenter {
+  display: flex;
+  justify-content: center;
+}
+.edit-btn {
+  padding: 4px 8px;
+  font-size: 15px;
+  margin: 0 8px;
+  border-radius: 5px;
+}
+.edit-btn:disabled {
+  background-color: lightgray;
+  color: rgb(120, 116, 134);
+}
+textarea {
+  margin: 1em;
+  border-radius: 3px;
+}
+p.error {
+  color: red;
+}
+p.error::first-letter {
+  text-transform: capitalize;
+}

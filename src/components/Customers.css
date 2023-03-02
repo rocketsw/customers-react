@@ -1,0 +1,61 @@
+table, th, td {
+    border: 1px solid black;
+    padding: 5px;
+    background-color: white;
+    color: black;
+}
+.labeltext {
+  color: white;
+  text-align: right;
+  padding-right:0px;
+  padding-bottom:1px;
+}
+.list-container {
+  display: flex;
+  flex-direction: column;
+  padding: 0px 15px;
+  margin: auto;
+  justify-content: center;
+}
+.list {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  margin-top: 1em;
+  margin-bottom: 1em;
+}
+
+.list-btn {
+  padding: 4px 12px;
+  font-size: 15px;
+  border-radius: 5px;
+}
+.list-btn:disabled {
+  background-color: lightgray;
+}
+
+.btn-row {
+  display: flex;
+  flex-direction: row;
+
+}
+.btn-row-left-side {
+  width: 45%;
+  color: white;
+  padding: 4px;
+}
+.btn-row-middle {
+  width: 10%;
+  justify-content: right;
+}
+.btn-row-right-side {
+  width: 45%;
+  color: white;
+  padding: 4px;
+}
+.list-error {
+  width: auto;
+  color: white;
+  background-color: red;
+  padding: 4px;
+}
