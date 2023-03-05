@@ -1,3 +1,14 @@
+CREATE TABLE `customer` (
+  `CustomerID` int auto_increment primary key,
+  `FirstName` char(15) DEFAULT NULL,
+  `LastName` char(20) NOT NULL,
+  `Street` char(25) DEFAULT NULL,
+  `City` char(20) DEFAULT NULL,
+  `State` char(2) DEFAULT NULL,
+  `Zipcode` char(10) DEFAULT NULL,
+  `Phone` char(13) DEFAULT NULL
+) ;
+
 insert into customer (FirstName, LastName, Street, City, State, Zipcode, Phone) values
  ( "Betty", "White", "5 Hollywood Blvd", "Holllywood", "CA", "22222", "222-333-4444" );
 insert into CUSTOMER (FirstName, LastName, Street, City, State, Zipcode, Phone)  values 

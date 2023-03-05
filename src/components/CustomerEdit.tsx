@@ -120,8 +120,12 @@ export const CustomerEdit = ({ customer, handleSaveEdit, handleCancelEdit, handl
     handleEditStatusChange(isEditting)
   }
 
+  const checkKeyDown = (e) => {
+    if (e.code === 'Enter') e.preventDefault();
+  };
+
   return (
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form onKeyDown={(e) => checkKeyDown(e)} onSubmit={handleSubmit(onSubmit)}>
         <h1>{isAddOrEdit} Customer</h1>
         <div className="edit-wrapper">
           <div className="edit-container">

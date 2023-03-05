@@ -1,9 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import './Customers.css'
 import { CustomerType } from '../App'
 
-export const Customers = ({ customers, onSelectCustomer, isEditInProgess }) => {
-    console.log("in Customer")
+export const Customers = ({ customers, onSelectCustomer, isEditInProgess, shouldClearSelectButton }) => {
+    console.log("in Customers")
 
     let [rowSelectedError, setRowSelectedError] = useState(false)
 
@@ -26,6 +26,24 @@ export const Customers = ({ customers, onSelectCustomer, isEditInProgess }) => {
             setTimeout(() => setRowSelectedError(false), 3000)
         }
     }
+
+    let clearSelect = () => {
+        console.log("clearSelect()");
+        let radios = document.getElementsByName('custid');
+        for (let i = 0, length = radios.length; i < length; i++) {
+            let radio = radios[i] as HTMLInputElement;
+            radio.checked  = false
+        }
+    }
+
+    let clearSelectRef = useRef(() => clearSelect());
+    clearSelectRef.current = clearSelect
+
+    useEffect(() => {
+        if( shouldClearSelectButton ) {
+          clearSelect()
+        }
+      }, [clearSelectRef, shouldClearSelectButton])
 
     function editCustomer(index: number): CustomerType {
         console.log("index = " + index);

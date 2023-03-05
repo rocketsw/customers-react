@@ -32,6 +32,7 @@ export type CustomersTypeProps = {
   customer: SelectedCustomerType;
   onSelectCustomer: (cust: CustomerType) => void;
   editStatus: (editinProgress: boolean) => void;
+  shouldClearSelectButton: boolean;
 }
 
 export type CustomerEditTypeProps = {
@@ -43,10 +44,6 @@ export type CustomerEditTypeProps = {
   isAddOrEdit: string;
 }
 
-
-//export type SetCustomerType = SetStateAction<CustomerType>
-//export type CustomersProps = { setCustomer: SetCustomerType }
-
 export const App = () => {
   console.log('in App()')
   const [customerList, setCustomerList] = useState<CustomerType[]>([]);
@@ -54,6 +51,7 @@ export const App = () => {
   const [msg, setMsg] = useState("")
   const [isEditting, setIsEditting] = useState(false)
   let [editOrAdd, setAddOrEdit] = useState('Edit')
+  let [clearSelectButton, setClearSelectButton] = useState(false)
 
   useEffect(() => {
     let url = "http://localhost:3000/customers"
@@ -62,7 +60,8 @@ export const App = () => {
         if (!response.ok) {
           throw new Error("Network response was not OK");
         }
-        return response.json();
+        let custjson = response.json()
+        return custjson;
       })
       .then((result) => {  // result is an object
         console.log("customers fetch successful:", result);
@@ -76,6 +75,7 @@ export const App = () => {
   const handleSelectCustomer = customer => {
     setAddOrEdit('Edit')
     setSelectedCustomer(customer);
+    setClearSelectButton(false)
   };
 
   const handleSavedEdit = (updatedCustomer: CustomerType, serverMsg: string) => {
@@ -88,24 +88,28 @@ export const App = () => {
     }
     setSelectedCustomer(null);
     setIsEditting(false);
+    setClearSelectButton(true)
     setMsg(serverMsg);
   };
 
   const handleCancelEdit = () => {
     setSelectedCustomer(null);
     setIsEditting(false)
+    setClearSelectButton(true)
     setMsg('');
   };
 
   const onAdd = () => {
     setSelectedCustomer(defaultValue)
+    setClearSelectButton(true)
     setAddOrEdit('Add')
   }
 
   return (
     <>
       <div>
-        <Customers customers={customerList} onSelectCustomer={handleSelectCustomer} isEditInProgess={isEditting} />
+        <Customers customers={customerList} onSelectCustomer={handleSelectCustomer} 
+            isEditInProgess={isEditting} shouldClearSelectButton={clearSelectButton}/>
         <div className="btn-row">
           <div className="btn-row-left-side"></div>
           <div className="btn-row-middle">
