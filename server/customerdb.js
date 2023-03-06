@@ -1,11 +1,9 @@
 let mysql = require('mysql');
-
+// May need to install and use 'mysql2'.  Errors connecting with mysql on laptop.
 module.exports = 
 {
 	
 	CustomerDB: function () {
-		let results;
-		let mysql = require('mysql');
 
 		let connection = mysql.createConnection({
 		  host: "localhost",
@@ -15,8 +13,8 @@ module.exports =
 		});
 
 	    try {
-		connection.connect();
-		console.log("connected to mysql DB");
+		   connection.connect();
+		   console.log("connected to mysql DB");
 		} catch(err) {
 			console.log("Error connecting to mysql DB", err);
 		}
@@ -88,8 +86,7 @@ module.exports =
         this.getCustomerByID = function (indata, callback) {
             let id = indata
             console.log('id = ' + id.toString())
-            //customerjson = '{"last":"' + results[last_name_pos] + '","first":"' + results[first_name_pos] +
-            '"}';
+            //customerjson = '{"last":"' + results[last_name_pos] + '","first":"' + results[first_name_pos] + '"}';
             let getCustomerSQL = `select lastname, firstname from customer where customerid = + ${id}`
             console.log(getCustomerSQL)
             connection.query(getCustomerSQL, function (err, data) {

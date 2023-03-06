@@ -15,7 +15,6 @@ app.listen(port, () => console.log(`Example app listening on port ${port}!`))
 
 app.get('/customers', (req, res) => {
     custDB.getCustomers(res);
-    console.log('done with custDB.getCustomers()')
   } );
 
 app.get('/updateCustomer', (req, res) => {

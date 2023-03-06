@@ -1,6 +1,5 @@
 let customerdb = require('./customerdb.js'),
-    express = require( 'express' ),
-    serveStatic = require( 'serve-static' );
+    express = require( 'express' );
 
 let custDB = new customerdb.CustomerDB();
 
@@ -26,30 +25,7 @@ app.get('/addCustomer', (req, res) => {
     custDB.insertCustomer(req.query, updateCustomerCallback(res));
 });
 
-function getCustomers(response) {
-    let res = response;
-    custDB.query('SELECT * FROM customer')
-        .then(data => {
-            let customerjson = '[';
-            for (i = 0; i < data.length; i++) {
-                if (customerjson.length > 1) {
-                    customerjson = customerjson + ',';
-                }
-                customerjson = customerjson + `{"id":"${data[i].CustomerID.toString()}","first":"${data[i].FirstName}",
-                  "last":"${data[i].LastName}","street":"${data[i].Street}","city":"${data[i].City}",
-                  "state":"${data[i].State}","zip":"${data[i].Zipcode}","phone":"${data[i].Phone}"}`;
-            }
-            customerjson = customerjson + ']';
-            console.log('customerjson: ' + customerjson);
-
-            res.write(customerjson);
-            res.end();
-        })
-        .catch(err => {
-            console.log(err.sqlMessage)
-        });
-}
-
+// the innerCallback() expects 'data' argurment will be an object with a 'message' key and 'string' value
 let updateCustomerCallback = function (response) {
     let innerCallback = function (err, data) {
         let res = response;
