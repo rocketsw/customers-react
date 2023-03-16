@@ -5,6 +5,7 @@ type MessagesPropsType = {
 }
 
 export const Messages = ({ messages } : MessagesPropsType) => {
+   console.log('in Messages with message = ', messages)
 
     const handleChange = (event) => {
         //setTextarea(event.target.value)

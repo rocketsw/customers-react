@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
 import './App.css';
-import { Customers } from './components/Customers'
+//import { Customers } from './components/Customers'
+import { CustomerDataGrid } from './components/CustomerDataGrid'
 import { CustomerEdit } from './components/CustomerEdit'
-import { Messages } from './components/Messages'
+//import { Messages } from './components/Messages'
+import { retrieveCustomersAPI } from './service/apiService'
 
 export type CustomerType = {
   id: number;
@@ -44,32 +46,21 @@ export type CustomerEditTypeProps = {
   isAddOrEdit: string;
 }
 
+
+
 export const App = () => {
   console.log('in App()')
   const [customerList, setCustomerList] = useState<CustomerType[]>([]);
   const [selectedCustomer, setSelectedCustomer] = useState<SelectedCustomerType>(null);
-  const [msg, setMsg] = useState("")
   const [isEditting, setIsEditting] = useState(false)
+  //const [msg, setMsg] = useState("")
   let [editOrAdd, setAddOrEdit] = useState('Edit')
   let [clearSelectButton, setClearSelectButton] = useState(false)
 
   useEffect(() => {
-    let url = "http://localhost:3000/customers"
-    fetch(url)
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Network response was not OK");
-        }
-        let custjson = response.json()
-        return custjson;
-      })
-      .then((result) => {  // result is an object
-        console.log("customers fetch successful:", result);
-        setCustomerList(result);
-      })
-      .catch((error) => {
-        console.error("There has been a problem with the fetch 'customers' API call:", error);
-      })
+
+    retrieveCustomersAPI( setCustomerList )
+   
   }, [])
 
   const handleSelectCustomer = customer => {
@@ -81,22 +72,26 @@ export const App = () => {
   const handleSavedEdit = (updatedCustomer: CustomerType, serverMsg: string) => {
     if (editOrAdd === 'Edit') {
       const index = customerList.findIndex(c => c.id === updatedCustomer.id);
-      customerList[index] = updatedCustomer;
+      let newCustomerList: CustomerType[] = [...customerList ];
+      newCustomerList[index] = updatedCustomer;
+      setCustomerList( newCustomerList );
     } else
     {
-      customerList.push(updatedCustomer);
+      let newCustomerList: CustomerType[] = [...customerList ];
+      newCustomerList.push(updatedCustomer);
+      setCustomerList( newCustomerList );
     }
     setSelectedCustomer(null);
     setIsEditting(false);
     setClearSelectButton(true)
-    setMsg(serverMsg);
+    //setMsg(serverMsg);
   };
 
   const handleCancelEdit = () => {
     setSelectedCustomer(null);
     setIsEditting(false)
     setClearSelectButton(true)
-    setMsg('');
+    //setMsg('');
   };
 
   const onAdd = () => {
@@ -108,19 +103,19 @@ export const App = () => {
   return (
     <>
       <div>
-        <Customers customers={customerList} onSelectCustomer={handleSelectCustomer} 
+        <CustomerDataGrid customers={customerList} onSelectCustomer={handleSelectCustomer} 
             isEditInProgess={isEditting} shouldClearSelectButton={clearSelectButton}/>
         <div className="btn-row">
           <div className="btn-row-left-side"></div>
           <div className="btn-row-middle">
-            <button className="list-btn" disabled={isEditting} type="button" onClick={onAdd} >Add</button>
+            <button className="list-btn" disabled={isEditting} type="button" onClick={onAdd} >Add Customer</button>
           </div>
         </div>
-        {selectedCustomer &&
-           <CustomerEdit customer={selectedCustomer} handleSaveEdit={handleSavedEdit} handleCancelEdit={handleCancelEdit} 
+
+        <CustomerEdit customer={selectedCustomer} handleSaveEdit={handleSavedEdit} handleCancelEdit={handleCancelEdit} 
               handleEditStatusChange={setIsEditting} isEditInProgess={isEditting} isAddOrEdit={editOrAdd} />
-        }
-        <Messages messages={msg} />
+
+        {/*  <Messages messages={msg} />  */}
       </div>
     </>
   )

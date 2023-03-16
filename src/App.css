@@ -6,7 +6,8 @@
   box-sizing: border-box;
 }
 body {
-  background-color: rgb(0, 64, 255);
+  background-color: white;
+  background-color: rgb(0, 64, 255); 
   font-family: Arial, Helvetica, sans-serif;
 }
 h1 {

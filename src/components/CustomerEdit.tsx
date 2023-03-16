@@ -3,6 +3,8 @@ import { useForm, SubmitHandler } from "react-hook-form";
 //import { ErrorMessage } from '@hookform/error-message';
 import './CustomerEdit.css'
 import { CustomerType, CustomerEditTypeProps } from '../App'
+import { addOrUpdateCustomersAPI } from '../service/apiService'
+import Snackbar from '@mui/material/Snackbar';
 
 let defaultValue: CustomerType = {
   id: 0,
@@ -24,14 +26,20 @@ let mapKeysArray = mapKeyToFieldArray.map(entry => Object.keys(entry)[0])
 let mapValuesArray = mapKeysArray.map((key, index) => mapKeyToFieldArray[index][mapKeysArray[index]])
 //console.log( mapValuesArray )
 
+
+
 export const CustomerEdit = ({ customer, handleSaveEdit, handleCancelEdit, handleEditStatusChange, isAddOrEdit }: CustomerEditTypeProps) => {
   console.log('in CustomerEdit', customer)
   let [shouldClearEntry, setShouldClearEntry] = useState(false)
+  let [editFormData, setEditFormData] = useState({} as CustomerType)
 
   let isEditInProgess = false;
   let isEdittingRef = useRef(isEditInProgess)
-  if (isAddOrEdit === 'Add') { isEdittingRef.current = true }
+  //if (isAddOrEdit === 'Add') { isEdittingRef.current = true }
 
+  const [snackbarProps, setSnackbarProps] = useState( {open: false, message: ''} );
+
+  const handleCloseSnackbar = () => setSnackbarProps({open: false, message: ''} );
 
   const { register, handleSubmit, reset, formState: { errors } } = useForm({
     defaultValues: { ...defaultValue }
@@ -51,9 +59,10 @@ export const CustomerEdit = ({ customer, handleSaveEdit, handleCancelEdit, handl
   function checkRequired(formData: CustomerType) {
     // Edit the 'mapKeyToFieldArray' object array above whenever a new text input field is added or existing field is removed or renamed.
     // Will need to handle other input types outside of the loop below.
-    let missingEntry = true;
+    let missingEntry:boolean = true;
     let field = "";
     mapKeysArray.every((key, index) => {
+      missingEntry = false;
       if (!formData[key] || formData[key]?.length === 0) {
         missingEntry = true;
         field = mapValuesArray[index];
@@ -62,15 +71,6 @@ export const CustomerEdit = ({ customer, handleSaveEdit, handleCancelEdit, handl
       return true;
     }
     )
-    /*   Replaced below with mapKeysArray.every() loop above.  
-        if( formData.first?.length === 0 ) { missingEntry = true;  field = "First Name"; }
-        if( formData.last?.length === 0 ) { missingEntry = true;  field = "Last Name"; }
-        if( formData.street?.length === 0 ) { missingEntry = true;  field = "Street"; }
-        if( formData.city?.length === 0 ) { missingEntry = true;  field = "City"; }
-        if( formData.state?.length === 0 ) { missingEntry = true;  field = "State"; }
-        if( formData.zip?.length === 0 ) { missingEntry = true;  field = "Zipcode"; }
-        if( formData.phone?.length === 0 ) { missingEntry = true;  field = "Phone Number"; }
-    */
     if (missingEntry === true) {
       alert(field + " value is required.");
     }
@@ -94,28 +94,15 @@ export const CustomerEdit = ({ customer, handleSaveEdit, handleCancelEdit, handl
         let customerParamStr = "id=" + id + "&first=" + first + "&last=" + last + "&street=" + street + "&city=" + city + "&state=" + state + "&zip=" + zip + "&phone=" + phone;
         console.log(customerParamStr)
 
-        let api = isAddOrEdit === 'Add' ? 'addCustomer' : 'updateCustomer'
-        let url = "http://localhost:3000/" + api + "?" + customerParamStr;
-        fetch(url)
-          .then((response) => {
-            if (!response.ok) {
-              throw new Error("Network response for '" + api + "' was an error. " + response.statusText);
-            }
-            return response.text();
-          })
-          .then((result) => {  // result is an object
-            console.log(api + " fetch successful:", result);
-            handleDBWriteCallback(formData, result);
-          })
-          .catch((error) => {
-            console.error("The '" + api + "'  API call returned an error:", error);
-          })
+        setEditFormData( formData )
+        addOrUpdateCustomersAPI(isAddOrEdit, customerParamStr, handleDBWriteCallback)
       }
     }
   }
 
-  function handleDBWriteCallback(formData: CustomerType, messageText) {
-    handleSaveEdit(formData, messageText)
+  function handleDBWriteCallback(messageText: string) {
+    handleSaveEdit(editFormData, messageText)
+    setSnackbarProps({ open: true, message: messageText });
     isEdittingRef.current = false;
     setShouldClearEntry(true);
   }
@@ -123,6 +110,7 @@ export const CustomerEdit = ({ customer, handleSaveEdit, handleCancelEdit, handl
   let onCancel = () => {
     isEdittingRef.current = false;
     handleEditStatusChange(isEditInProgess)
+
     setShouldClearEntry(true);
     handleCancelEdit();
     return false;
@@ -138,69 +126,69 @@ export const CustomerEdit = ({ customer, handleSaveEdit, handleCancelEdit, handl
   };
 
   return (
+    <>
     <form onKeyDown={(e) => checkKeyDown(e)} onSubmit={handleSubmit(onSubmit)}>
       <h1>{isAddOrEdit} Customer</h1>
       <div className="edit-wrapper">
         <div className="edit-container">
           <div>
             <input className='noShow' {...register('id')} id="id" />
-            <div className="data-div">
-              <label>First Name:
+            
+              <label htmlFor="first">First Name:</label>
                 <input type="text" {...register('first', { required: true, onChange: () => editStatusWrapper(true) })} id="first" placeholder="Enter first name" />
                 {errors.first?.type === 'required' && <p className="error" role="alert">first name is required</p>}
-              </label>
-            </div>
-            <div className="data-div">
-              <label>Street Address:
+              
+            
+              <label htmlFor="street">Street Address:</label>
                 <input type="text" {...register('street', { required: true, onChange: () => editStatusWrapper(true) })} id="street" placeholder="Enter street address" />
                 {errors.street?.type === 'required' && <p className="error" role="alert">street address is required</p>}
-              </label>
-            </div>
-            <div className="data-div">
-              <label>City:
+
+
+              <label htmlFor="city">City:</label>
                 <input type="text" {...register('city', { required: true, onChange: () => editStatusWrapper(true) })} id="city" placeholder="Enter city" />
                 {errors.city?.type === 'required' && <p className="error" role="alert">city is required</p>}
-              </label>
-            </div>
-            <div className="data-div">
-              <label>Zip Code:
+
+
+              <label htmlFor="zip">Zip Code:</label>
                 <input type="text" {...register('zip', { required: true, onChange: () => editStatusWrapper(true) })} id="zip" placeholder="Enter Zip Code" />
                 {errors.zip?.type === 'required' && <p className="error" role="alert">zip code is required</p>}
-              </label>
-            </div>
-            <div className="data-div">
-              <label>Phone:
+              
+
+              <label htmlFor="phone">Phone:</label>
                 <input type="text" {...register('phone', { required: true, onChange: () => editStatusWrapper(true) })} id="phone" placeholder="Enter phone number" />
                 {errors.phone?.type === 'required' && <p className="error" role="alert">phone number is required</p>}
-              </label>
-            </div>
+
           </div>
           <div>
-            <div className="data-div">
-              <label>Last Name:
+
+              <label htmlFor="last">Last Name:</label>
                 <input type="text" {...register('last', { required: true, onChange: () => editStatusWrapper(true) })} id="last" placeholder="Enter last name" />
                 {errors.last?.type === 'required' && <p className="error" role="alert">last name is required</p>}
-              </label>
-            </div>
-            <div className="data-div">
-              <label>  &nbsp;
-                <input className="hidden" />
-              </label>
-            </div>
-            <div className="data-div">
-              <label>State:
-                <input type="text" {...register('state', { required: true, onChange: () => editStatusWrapper(true) })} id="state" placeholder="Enter State" />
+
+              <label htmlFor="hidden">&nbsp;</label>
+                <input type="text" id="hidden"  style={{visibility:"hidden"}} />
+
+              <label htmlFor="state">State:</label>
+                <input type="text" {...register('state', { required: true, onChange: () => editStatusWrapper(true) })} id="state" />
                 {errors.state?.type === 'required' && <p className="error" role="alert">state is required</p>}
-              </label>
-            </div>
+              
+
           </div>
         </div>
       </div>
 
       <div className="rowcenter">
         <button className="edit-btn" type="submit" disabled={!isEdittingRef.current} >Save</button>
-        <button className="edit-btn" type="button" onClick={onCancel}>Cancel</button>
+        <button className="edit-btn" type="button" disabled={!isEdittingRef.current} onClick={onCancel}>Cancel</button>
       </div>
     </form>
+    <Snackbar
+          open={snackbarProps.open}
+          message={snackbarProps.message}
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+          onClose={handleCloseSnackbar}
+          autoHideDuration={6000}
+    />
+    </>
   )
 }

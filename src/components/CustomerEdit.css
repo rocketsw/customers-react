@@ -3,33 +3,38 @@
   overflow-x: hidden;
   grid-template-columns: 1fr 1fr;
   grid-gap: 8px;
-  padding: 20px;
+  padding: 10px 20px;
   border-style: solid;
   border-color: white;
   width: 75%;
   margin-bottom: 1em;
+  background-color: rgb(0, 64, 255);
 }
-.edit-container input {
-  width: 250px;
+.edit-container input[type=text] {
+  width: 100%;
+  display: inline-block;
   padding: 8px;
+  margin-top:5px;
   border-radius: 10px;
   border: 1px solid #ccc;
-  margin-bottom: 0px;
+  box-sizing: border-box;
 }
 .edit-container input:focus {
   outline: none;
   border-color: #007bff;
 }
 .edit-container label {
+  width: 100%;
   font-weight: bold;
-  margin-bottom: 0px;
-  display: inline-block;
-  width: 120px;
+  display: block;
   color: white;
+  margin-top: 12px;
+  margin-right: 10px;
 }
 .data-div {
+  width: 100%;
   margin-bottom: 8px;
-  display: block;
+  display: inline-block;
 }
 .hidden {
   visibility: hidden;
@@ -43,16 +48,10 @@
   width: 75%;
   justify-content: center;
 }
-#statex {
-  width: 2em;
-}
-#zipcodex {
-  width: 8em;
-}
 .edit-btn {
   padding: 4px 8px;
   font-size: 15px;
-  margin: 0 8px;
+  margin: 0 8px 12px 8px;
   border-radius: 5px;
 }
 .edit-btn:disabled {
@@ -68,4 +67,14 @@ p.error {
 }
 p.error::first-letter {
   text-transform: capitalize;
+}
+
+#state {
+  width: 3em;
+}
+#zip {
+  width: 12em;
+}
+#hidden {
+  visibility: "hidden";
 }
